@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import StaffDashboard from './components/StaffDashboard';
+import { BrowserRouter } from 'react-router-dom';
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
@@ -27,14 +28,11 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <AppContent />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
       </AuthProvider>
-      <Toaster 
-        position="top-right"
-        richColors
-        closeButton
-        duration={4000}
-      />
+      <Toaster position="top-right" richColors closeButton duration={4000} />
     </>
   );
 }

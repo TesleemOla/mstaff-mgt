@@ -1,36 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import StaffManagement from './admin/StaffManagement';
 import ClassManagement from './admin/ClassManagement';
 import TimeReports from './admin/TimeReports';
 import StaffTimeLogger from './admin/StaffTimeLogger';
 import { Users, BookOpen, Clock, LogOut, BarChart3, Timer } from 'lucide-react';
+import { Link, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import SingleLogs from './admin/SingleLogs';
+
+const tabs = [
+  { id: 'logging', label: 'Staff Time Logging', icon: Timer, path: '/admin/logging' },
+  { id: 'staff', label: 'Staff Management', icon: Users, path: '/admin/staff' },
+  { id: 'classes', label: 'Classes', icon: BookOpen, path: '/admin/classes' },
+  { id: 'reports', label: 'Time Reports', icon: BarChart3, path: '/admin/reports' },
+];
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('logging');
   const { user, logout } = useAuth();
-
-  const tabs = [
-    { id: 'logging', label: 'Staff Time Logging', icon: Timer },
-    { id: 'staff', label: 'Staff Management', icon: Users },
-    { id: 'classes', label: 'Classes', icon: BookOpen },
-    { id: 'reports', label: 'Time Reports', icon: BarChart3 },
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'logging':
-        return <StaffTimeLogger />;
-      case 'staff':
-        return <StaffManagement />;
-      case 'classes':
-        return <ClassManagement />;
-      case 'reports':
-        return <TimeReports />;
-      default:
-        return <StaffTimeLogger />;
-    }
-  };
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -65,19 +52,20 @@ const AdminDashboard: React.FC = () => {
             <nav className="lg:flex space-x-8 px-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
+                const isActive = location.pathname === tab.path;
                 return (
-                  <button
+                  <Link
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    to={tab.path}
                     className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm transition duration-200 ${
-                      activeTab === tab.id
+                      isActive
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
                     <Icon className="w-5 h-5 mr-2" />
                     {tab.label}
-                  </button>
+                  </Link>
                 );
               })}
             </nav>
@@ -86,7 +74,15 @@ const AdminDashboard: React.FC = () => {
 
         {/* Content */}
         <div className="bg-white rounded-lg shadow-sm">
-          {renderContent()}
+          <Routes>
+            <Route path="/admin/logging" element={<StaffTimeLogger />} />
+            <Route path="/admin/staff" element={<StaffManagement />} />
+            <Route path="/admin/classes" element={<ClassManagement />} />
+            <Route path="/admin/reports" element={<TimeReports />} />
+            <Route path="/admin/staff/:id" element={<SingleLogs />} />
+            {/* Default route */}
+            <Route path="*" element={<Navigate to="/admin/logging" replace />} />
+          </Routes>
         </div>
       </div>
     </div>

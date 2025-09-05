@@ -15,8 +15,7 @@ const ClassManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+ 
 
   const API_BASE = 'http://localhost:5000/api';
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import AddStaffModal from "../AddStaffModal"
+import { ArrowUpRightSquare, Plus, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { redirect, useNavigate } from 'react-router-dom';
 
 interface Staff {
   _id: string;
@@ -11,7 +13,8 @@ interface Staff {
   createdAt: string;
 }
 
-const StaffManagement: React.FC = () => {
+const StaffManagement = () => {
+  const navigate = useNavigate();
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -48,7 +51,10 @@ const StaffManagement: React.FC = () => {
     useEffect(() => {
       fetchStaff();
     }, [fetchStaff]);
-    
+
+    function handleSingle(member: Staff){
+      navigate(`/admin/staff/${member?._id}`)
+    }
   const handleAddStaff = async (formData: any) => {
     try {
       const response = await fetch(`${API_BASE}/staff`, {
@@ -133,7 +139,7 @@ const StaffManagement: React.FC = () => {
       </div>
 
       {/* Staff List */}
-      <div className="grid gap-4">
+     <div className="grid lg:grid-cols-3 gap-4">
         {filteredStaff.map((member) => (
           <div key={member._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition duration-200">
             <div className="flex justify-between items-center">
@@ -158,6 +164,9 @@ const StaffManagement: React.FC = () => {
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
+                {member.role === "staff" && <button onClick={() => handleSingle(member)}>
+                  <ArrowUpRightSquare />
+                </button>}
               </div>
             </div>
           </div>
@@ -181,103 +190,5 @@ const StaffManagement: React.FC = () => {
   );
 };
 
-const AddStaffModal: React.FC<{
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-}> = ({ onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    fullName: '',
-    role: 'staff'
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Staff Member</h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                minLength={6}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="staff">Staff</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
-              >
-                Add Staff
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default StaffManagement;

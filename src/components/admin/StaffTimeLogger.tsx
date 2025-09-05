@@ -25,7 +25,7 @@ const StaffTimeLogger: React.FC = () => {
   const [arrivalForm, setArrivalForm] = useState({
     staffId: '',
     date: new Date().toISOString().split('T')[0],
-    arrivalTime: '',
+    arrivalTime: "",
     notes: ''
   });
 
@@ -83,8 +83,8 @@ const StaffTimeLogger: React.FC = () => {
   const handleArrivalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-  
-
+    console.log(arrivalForm)
+    console.log(new Date().toISOString().split('T')[0])
     try {
       const response = await fetch(`${API_BASE}/time-logs/arrival`, {
         method: 'POST',
@@ -115,7 +115,6 @@ const StaffTimeLogger: React.FC = () => {
   const handleTeachingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const response = await fetch(`${API_BASE}/time-logs/teaching`, {
         method: 'POST',
@@ -145,7 +144,7 @@ const StaffTimeLogger: React.FC = () => {
     }
   };
 
-  const setCurrentTime = (form: 'arrival' | 'teaching', field?: 'startTime' | 'endTime') => {
+ function setCurrentTime (form: 'arrival' | 'teaching', field?: 'startTime' | 'endTime') {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -169,28 +168,29 @@ const StaffTimeLogger: React.FC = () => {
       </div>
 
       <p className="text-gray-600 mb-6">
-        As an admin, you can log arrival and teaching times for staff members under your supervision.
+        As an admin, you can log arrival and teaching times for staff members
+        under your supervision.
       </p>
 
       {/* Form Type Tabs */}
       <div className="flex mb-6 border-b border-gray-200">
         <button
-          onClick={() => setActiveForm('arrival')}
+          onClick={() => setActiveForm("arrival")}
           className={`px-4 py-2 font-medium text-sm border-b-2 transition duration-200 ${
-            activeForm === 'arrival'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+            activeForm === "arrival"
+              ? "border-blue-500 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
           <Clock className="w-4 h-4 inline mr-2" />
           Log Arrival Time
         </button>
         <button
-          onClick={() => setActiveForm('teaching')}
+          onClick={() => setActiveForm("teaching")}
           className={`px-4 py-2 font-medium text-sm border-b-2 transition duration-200 ${
-            activeForm === 'teaching'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+            activeForm === "teaching"
+              ? "border-blue-500 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700"
           }`}
         >
           <BookOpen className="w-4 h-4 inline mr-2" />
@@ -199,16 +199,21 @@ const StaffTimeLogger: React.FC = () => {
       </div>
 
       {/* Arrival Form */}
-      {activeForm === 'arrival' && (
+      {activeForm === "arrival" && (
         <form onSubmit={handleArrivalSubmit} className="max-w-md space-y-6">
           <div>
-            <label htmlFor="staffId" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="staffId"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Staff Member
             </label>
             <select
               id="staffId"
               value={arrivalForm.staffId}
-              onChange={(e) => setArrivalForm({ ...arrivalForm, staffId: e.target.value })}
+              onChange={(e) =>
+                setArrivalForm({ ...arrivalForm, staffId: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             >
@@ -222,50 +227,64 @@ const StaffTimeLogger: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="arrivalDate" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="arrivalDate"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Date
             </label>
             <input
               type="date"
               id="arrivalDate"
               value={arrivalForm.date}
-              onChange={(e) => setArrivalForm({ ...arrivalForm, date: e.target.value })}
+              onChange={(e) =>
+                setArrivalForm({ ...arrivalForm, date: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="arrivalTime" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="arrivalTime"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Arrival Time
             </label>
             <div className="flex space-x-2">
+              <button
+                type="button"
+                onClick={() => setCurrentTime("arrival")}
+                className="px-4 py-2 bg-blue-900 text-gray-200 rounded-lg hover:bg-black transition duration-200"
+              >
+                Set Now
+              </button>
               <input
                 type="time"
                 id="arrivalTime"
+                disabled={true}
                 value={arrivalForm.arrivalTime}
-                onChange={(e) => setArrivalForm({ ...arrivalForm, arrivalTime: e.target.value })}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border cursor-not-allowed
+                border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setCurrentTime('arrival')}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200"
-              >
-                Now
-              </button>
             </div>
           </div>
 
           <div>
-            <label htmlFor="arrivalNotes" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="arrivalNotes"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Notes (Optional)
             </label>
             <textarea
               id="arrivalNotes"
               value={arrivalForm.notes}
-              onChange={(e) => setArrivalForm({ ...arrivalForm, notes: e.target.value })}
+              onChange={(e) =>
+                setArrivalForm({ ...arrivalForm, notes: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={3}
               placeholder="Any additional notes..."
@@ -277,22 +296,27 @@ const StaffTimeLogger: React.FC = () => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Logging...' : 'Log Arrival Time'}
+            {loading ? "Logging..." : "Log Arrival Time"}
           </button>
         </form>
       )}
 
       {/* Teaching Form */}
-      {activeForm === 'teaching' && (
+      {activeForm === "teaching" && (
         <form onSubmit={handleTeachingSubmit} className="max-w-md space-y-6">
           <div>
-            <label htmlFor="teachingStaffId" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="teachingStaffId"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Staff Member
             </label>
             <select
               id="teachingStaffId"
               value={teachingForm.staffId}
-              onChange={(e) => setTeachingForm({ ...teachingForm, staffId: e.target.value })}
+              onChange={(e) =>
+                setTeachingForm({ ...teachingForm, staffId: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             >
@@ -306,13 +330,18 @@ const StaffTimeLogger: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="classId" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="classId"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Class
             </label>
             <select
               id="classId"
               value={teachingForm.classId}
-              onChange={(e) => setTeachingForm({ ...teachingForm, classId: e.target.value })}
+              onChange={(e) =>
+                setTeachingForm({ ...teachingForm, classId: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             >
@@ -326,14 +355,19 @@ const StaffTimeLogger: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="teachingDate" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="teachingDate"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Date
             </label>
             <input
               type="date"
               id="teachingDate"
               value={teachingForm.date}
-              onChange={(e) => setTeachingForm({ ...teachingForm, date: e.target.value })}
+              onChange={(e) =>
+                setTeachingForm({ ...teachingForm, date: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -341,7 +375,10 @@ const StaffTimeLogger: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="startTime"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Start Time
               </label>
               <div className="flex space-x-1">
@@ -349,13 +386,18 @@ const StaffTimeLogger: React.FC = () => {
                   type="time"
                   id="startTime"
                   value={teachingForm.startTime}
-                  onChange={(e) => setTeachingForm({ ...teachingForm, startTime: e.target.value })}
+                  onChange={(e) =>
+                    setTeachingForm({
+                      ...teachingForm,
+                      startTime: e.target.value,
+                    })
+                  }
                   className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setCurrentTime('teaching', 'startTime')}
+                  onClick={() => setCurrentTime("teaching", "startTime")}
                   className="px-2 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 text-xs"
                 >
                   Now
@@ -364,7 +406,10 @@ const StaffTimeLogger: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="endTime"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 End Time
               </label>
               <div className="flex space-x-1">
@@ -372,13 +417,18 @@ const StaffTimeLogger: React.FC = () => {
                   type="time"
                   id="endTime"
                   value={teachingForm.endTime}
-                  onChange={(e) => setTeachingForm({ ...teachingForm, endTime: e.target.value })}
+                  onChange={(e) =>
+                    setTeachingForm({
+                      ...teachingForm,
+                      endTime: e.target.value,
+                    })
+                  }
                   className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setCurrentTime('teaching', 'endTime')}
+                  onClick={() => setCurrentTime("teaching", "endTime")}
                   className="px-2 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 text-xs"
                 >
                   Now
@@ -388,13 +438,18 @@ const StaffTimeLogger: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="teachingNotes" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="teachingNotes"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Notes (Optional)
             </label>
             <textarea
               id="teachingNotes"
               value={teachingForm.notes}
-              onChange={(e) => setTeachingForm({ ...teachingForm, notes: e.target.value })}
+              onChange={(e) =>
+                setTeachingForm({ ...teachingForm, notes: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={3}
               placeholder="Class details, topics covered, etc..."
@@ -406,7 +461,7 @@ const StaffTimeLogger: React.FC = () => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Logging...' : 'Log Teaching Time'}
+            {loading ? "Logging..." : "Log Teaching Time"}
           </button>
         </form>
       )}

@@ -40,7 +40,6 @@ const TimeReports: React.FC = () => {
     startDate: '',
     endDate: ''
   });
-  const [error, setError] = useState('');
 
   const API_BASE = 'http://localhost:5000/api';
 

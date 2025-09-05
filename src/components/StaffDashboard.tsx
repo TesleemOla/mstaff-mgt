@@ -11,14 +11,7 @@ const StaffDashboard: React.FC = () => {
     { id: 'logs', label: 'My Logs', icon: Calendar },
   ];
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'logs':
-        return <MyLogs />;
-      default:
-        return <MyLogs />;
-    }
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,7 +67,7 @@ const StaffDashboard: React.FC = () => {
 
         {/* Content */}
         <div className="bg-white rounded-lg shadow-sm">
-          {renderContent()}
+          <MyLogs />
         </div>
       </div>
     </div>
