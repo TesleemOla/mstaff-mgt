@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AddStaffModal from "../AddStaffModal"
-import { ArrowUpRightSquare, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpRightSquare, HelpingHand, Plus, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import ChangePasswordModal from '../ChangePasswordModal';
 
 interface Staff {
   _id: string;
@@ -18,6 +19,7 @@ const StaffManagement = () => {
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPwdModal, setShowPwdModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('');
 
 
@@ -55,7 +57,7 @@ const StaffManagement = () => {
     function handleSingle(member: Staff){
       navigate(`/admin/staff/${member?._id}`)
     }
-  const handleAddStaff = async (formData: any) => {
+  const handleAddStaff = async (formData:FormData) => {
     try {
       const response = await fetch(`${API_BASE}/staff`, {
         method: 'POST',
@@ -77,6 +79,26 @@ const StaffManagement = () => {
     }
   };
 
+  const handleChangePassword=async(formData: FormData)=>{
+    try{
+      console.log(formData)
+      const responseSys = await fetch(`${API_BASE}/auth/change-pwd`,{
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(formData),
+
+      })
+      const data = await responseSys.json();
+      if(responseSys.ok){
+        toast.success(data.message);
+      }else{
+        toast.error(data.message);
+      }
+    }catch(error){
+      toast.error(error instanceof Error ? error.message : 'Error changing password!');
+    }
+    
+  }
   const handleDeleteStaff = async (id: string) => {
     if (!confirm('Are you sure you want to delete this staff member?')) return;
 
@@ -117,13 +139,22 @@ const StaffManagement = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Staff Management</h2>
-        <button
+        <div className="flex flex-col lg:flex-row items-center gap-4">
+          <button
           onClick={() => setShowAddForm(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center"
+          className="bg-blue-600 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Staff
         </button>
+        <button
+          onClick={() => setShowPwdModal(true)}
+          className="bg-blue-600 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center"
+        >
+          <HelpingHand className="w-4 h-4 mr-2" />
+          Change Password
+        </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -139,19 +170,26 @@ const StaffManagement = () => {
       </div>
 
       {/* Staff List */}
-     <div className="grid lg:grid-cols-3 gap-4">
+      <div className="grid lg:grid-cols-3 gap-4">
         {filteredStaff.map((member) => (
-          <div key={member._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition duration-200">
+          <div
+            key={member._id}
+            className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition duration-200"
+          >
             <div className="flex justify-between items-center">
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-800">{member.fullName}</h3>
+                <h3 className="font-semibold text-gray-800">
+                  {member.fullName}
+                </h3>
                 <p className="text-gray-600 text-sm">{member.email}</p>
                 <div className="flex items-center mt-2">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    member.role === 'admin' 
-                      ? 'bg-purple-100 text-purple-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      member.role === "admin"
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
                     {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                   </span>
                 </div>
@@ -164,9 +202,11 @@ const StaffManagement = () => {
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
-                {member.role === "staff" && <button onClick={() => handleSingle(member)}>
-                  <ArrowUpRightSquare />
-                </button>}
+                {member.role === "staff" && (
+                  <button onClick={() => handleSingle(member)}>
+                    <ArrowUpRightSquare />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -174,7 +214,9 @@ const StaffManagement = () => {
 
         {filteredStaff.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            {searchTerm ? 'No staff members found matching your search.' : 'No staff members found.'}
+            {searchTerm
+              ? "No staff members found matching your search."
+              : "No staff members found."}
           </div>
         )}
       </div>
@@ -186,6 +228,14 @@ const StaffManagement = () => {
           onSubmit={handleAddStaff}
         />
       )}
+      {
+        showPwdModal && (
+          <ChangePasswordModal
+            onClose={() => setShowPwdModal(false)}
+            onSubmit={handleChangePassword}
+          />
+        )
+      }
     </div>
   );
 };

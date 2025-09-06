@@ -1,27 +1,59 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
+  interface Staff {
+    _id: string;
+    email: string;
+    fullName: string;
+    role: string;
+  }
 
-const AddStaffModal: React.FC<{
+const ChangePasswordModal: React.FC<{
   onClose: () => void,
   onSubmit: (data: any) => void,
 }> = ({ onClose, onSubmit }) => {
+const [staff, setStaff] = useState<Staff[]>([]);
+const API_BASE = "http://localhost:5000/api";
+
+const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    "Content-Type": "application/json",
+});
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    fullName: "",
-    role: "staff",
+    confirmPwd: ""
   });
-  const [confirmPwd, setConfirmPwd] = useState('');
+
+  useEffect(()=>{
+      const fetchStaff = async () => {
+        try {
+          const response = await fetch(`${API_BASE}/staff`, {
+            headers: getAuthHeaders(),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setStaff(
+              data.staff.filter((member: Staff) => member.role === "staff")
+            );
+          }
+        } catch (error) {
+          console.error("Failed to fetch staff:", error);
+        }
+      };
+      fetchStaff()
+  },[])
   const [error, setError] = useState("");
 
     const handleConfirmBlur=()=>{
-      if(confirmPwd !== formData.password){
+      if(formData.confirmPwd !== formData.password){
         setError("Passwords do not match");
       }else{
         setError("");
       }
     }
   const handleSubmit = (e: React.FormEvent) => {
+    console.log(staff)
     e.preventDefault();
     onSubmit(formData);
   };
@@ -31,43 +63,38 @@ const AddStaffModal: React.FC<{
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Add New Staff Member
+            Change Staff Password
           </h3>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+              <label
+                htmlFor="staffId"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Staff Member
               </label>
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, fullName: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
+              <select
+                id="staffId"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
-              />
+              >
+                <option value="">Select staff member</option>
+                {staff.map((member) => (
+                  <option key={member._id} value={member.email}>
+                    {member.fullName}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                New Password
               </label>
               <input
                 type="password"
@@ -81,39 +108,27 @@ const AddStaffModal: React.FC<{
               />
             </div>
             <p>
-              {error && <span className="text-red-700 bg-red-200 rounded-lg p-2">{error}</span>}
+              {error && (
+                <span className="text-red-700 bg-red-100 rounded-lg p-2">
+                  {error}
+                </span>
+              )}
             </p>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
+                Confirm New Password
               </label>
               <input
                 type="password"
                 onBlur={handleConfirmBlur}
-                value={confirmPwd}
+                value={formData.confirmPwd}
                 onChange={(e) =>
-                  setConfirmPwd( e.target.value )
+                  setFormData({ ...formData, confirmPwd: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 minLength={6}
                 required
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <select
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({ ...formData, role: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="staff">Staff</option>
-                <option value="admin">Admin</option>
-              </select>
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">
@@ -138,4 +153,6 @@ const AddStaffModal: React.FC<{
   );
 };
 
-export default AddStaffModal;
+export default ChangePasswordModal;
+
+

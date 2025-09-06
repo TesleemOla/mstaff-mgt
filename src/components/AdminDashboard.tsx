@@ -52,7 +52,7 @@ const AdminDashboard: React.FC = () => {
             <nav className="lg:flex space-x-8 px-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
-                const isActive = location.pathname === tab.path;
+                const isActive = location.pathname.startsWith(tab.path);
                 return (
                   <Link
                     key={tab.id}

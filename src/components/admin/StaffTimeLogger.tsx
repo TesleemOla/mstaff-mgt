@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, BookOpen, CheckCircle, Users } from 'lucide-react';
+import { Clock, BookOpen, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Staff {
@@ -106,7 +106,9 @@ const StaffTimeLogger: React.FC = () => {
         toast.error(data.message || 'Failed to log arrival time');
       }
     } catch (error) {
+      if(error instanceof Error){
       toast.error('Failed to connect to server');
+      }
     } finally {
       setLoading(false);
     }
@@ -162,14 +164,14 @@ const StaffTimeLogger: React.FC = () => {
       <div className="flex items-center mb-6">
         <Users className="w-6 h-6 text-blue-600 mr-3" />
         <h2 className="text-2xl font-bold text-gray-800">Staff Time Logging</h2>
-        <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+        <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
           Admin Supervised
         </span>
       </div>
 
       <p className="text-gray-600 mb-6">
-        As an admin, you can log arrival and teaching times for staff members
-        under your supervision.
+        As an admin, staff member can log arrival and teaching times only with your account.
+        However, they can view the logs on their dashboard
       </p>
 
       {/* Form Type Tabs */}

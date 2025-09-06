@@ -161,8 +161,8 @@ const TimeReports: React.FC = () => {
             <button key={log._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-800">{log.staffId.fullName}</h3>
-                  <p className="text-sm text-gray-600">{log.staffId.email}</p>
+                  <h3 className="font-semibold text-gray-800">{log?.staffId?.fullName}</h3>
+                  <p className="text-sm text-gray-600">{log?.staffId?.email}</p>
                   <div className="mt-2 flex items-center space-x-4 text-sm">
                     <span className="text-gray-700">
                       <strong>Date:</strong> {formatDate(log.date)}
