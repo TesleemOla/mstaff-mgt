@@ -194,20 +194,23 @@ const StaffManagement = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
+              
+                {member.role === "staff" && (
+                  <div className="flex items-center space-x-2">
+                  <button
                   onClick={() => handleDeleteStaff(member._id)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition duration-200"
                   title="Delete staff member"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
-                {member.role === "staff" && (
+                
                   <button onClick={() => handleSingle(member)}>
                     <ArrowUpRightSquare />
                   </button>
+                  </div>
                 )}
-              </div>
+              
             </div>
           </div>
         ))}
