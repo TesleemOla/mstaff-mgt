@@ -6,6 +6,7 @@ import AdminDashboard from './components/AdminDashboard';
 import StaffDashboard from './components/StaffDashboard';
 import { BrowserRouter } from 'react-router-dom';
 
+
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
 

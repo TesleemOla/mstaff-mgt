@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams } from 'react-router-dom';
+import { API_BASE } from "../../../utils/data";
 
 interface ArrivalLog {
   _id: string;
@@ -35,7 +36,6 @@ const SingleLogs: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const API_BASE = 'http://localhost:5000/api';
 
   useEffect(() => {
     const fetchMyLogs = async () => {

@@ -4,6 +4,7 @@ import { ArrowUpRightSquare, HelpingHand, Plus, Search, Trash2 } from 'lucide-re
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import ChangePasswordModal from '../ChangePasswordModal';
+import { API_BASE } from "../../../utils/data";
 
 interface Staff {
   _id: string;
@@ -23,7 +24,6 @@ const StaffManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
 
-  const API_BASE = 'http://localhost:5000/api';
 
 
   const getAuthHeaders = () => ({

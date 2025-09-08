@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_BASE } from "../../utils/data";
 
 interface User {
   _id: string;
@@ -34,7 +35,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = 'http://localhost:5000/api';
 
   useEffect(() => {
     const token = localStorage.getItem('token');

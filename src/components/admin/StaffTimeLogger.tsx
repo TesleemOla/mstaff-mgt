@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, BookOpen, Users } from 'lucide-react';
+import { API_BASE } from "../../../utils/data";
 import { toast } from 'sonner';
 
 interface Staff {
@@ -38,7 +39,6 @@ const StaffTimeLogger: React.FC = () => {
     notes: ''
   });
 
-  const API_BASE = 'http://localhost:5000/api';
 
   useEffect(() => {
     fetchStaff();

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { API_BASE } from "../../utils/data"
 
   interface Staff {
     _id: string;
@@ -12,7 +13,7 @@ const ChangePasswordModal: React.FC<{
   onSubmit: (data: any) => void,
 }> = ({ onClose, onSubmit }) => {
 const [staff, setStaff] = useState<Staff[]>([]);
-const API_BASE = "http://localhost:5000/api";
+
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("token")}`,

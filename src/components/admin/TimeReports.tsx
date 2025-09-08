@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Download, Filter } from 'lucide-react';
+import { API_BASE } from "../../../utils/data";
 import { toast } from 'sonner';
 
 interface ArrivalLog {
@@ -41,7 +42,6 @@ const TimeReports: React.FC = () => {
     endDate: ''
   });
 
-  const API_BASE = 'http://localhost:5000/api';
 
   useEffect(() => {
     fetchTimeReports();

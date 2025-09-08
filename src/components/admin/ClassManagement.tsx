@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { API_BASE } from "../../../utils/data";
 
 interface Class {
   _id: string;
@@ -17,7 +18,6 @@ const ClassManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
  
 
-  const API_BASE = 'http://localhost:5000/api';
 
   useEffect(() => {
     fetchClasses();
