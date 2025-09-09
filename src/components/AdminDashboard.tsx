@@ -49,7 +49,7 @@ const AdminDashboard: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="bg-white rounded-lg shadow-sm mb-8">
           <div className="border-b border-gray-200">
-            <nav className="lg:flex space-x-8 px-6">
+            <nav className="flex flex-col space-y-2 px-2 lg:flex-row lg:space-x-8 lg:space-y-0 lg:px-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = location.pathname.startsWith(tab.path);
