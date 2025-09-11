@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, BookOpen, Users } from 'lucide-react';
 import { API_BASE } from "../../../utils/data";
 import { toast } from 'sonner';
+import ArrivalDialog from './ArrivalDialog';
 
 interface Staff {
   _id: string;
@@ -17,11 +18,31 @@ interface Class {
 }
 
 const StaffTimeLogger: React.FC = () => {
+  
+
+  
   const [staff, setStaff] = useState<Staff[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [activeForm, setActiveForm] = useState<'arrival' | 'teaching'>('arrival');
   const [loading, setLoading] = useState(false);
+  const [latestArrival, setLatestArrival] = useState<string>('');
+  // Dialog state for arrival status
+  const [arrivalStatus, setArrivalStatus] = useState<null | 'early' | 'late'>(null);
+  const [showArrivalDialog, setShowArrivalDialog] = useState(false);
+   useEffect(() => {
+     const resumption = new Date();
+     resumption.setHours(8);
+     resumption.setMinutes(0);
+     resumption.setSeconds(0);
 
+     setLatestArrival(
+       resumption.toLocaleTimeString("en-US", {
+         hour: "numeric",
+         minute: "numeric",
+         hour12: true,
+       })
+     );
+   }, []);
 
   const [arrivalForm, setArrivalForm] = useState({
     staffId: '',
@@ -83,8 +104,25 @@ const StaffTimeLogger: React.FC = () => {
   const handleArrivalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(arrivalForm)
-    console.log(new Date().toISOString().split('T')[0])
+
+    // Convert latestArrival (e.g., "8:00 AM") to "HH:mm" 24-hour format
+    function to24Hour(timeStr: string) {
+      const [time, modifier] = timeStr.split(' ');
+      let hours = Number(time.split(':')[0]);
+      const minutes = Number(time.split(":")[1]);
+      if (modifier === 'PM' && hours !== 12) hours += 12;
+      if (modifier === 'AM' && hours === 12) hours = 0;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+    const latestArrival24 = to24Hour(latestArrival);
+    if (arrivalForm.arrivalTime > latestArrival24) {
+      setArrivalStatus('late');
+    } else {
+      setArrivalStatus('early');
+    }
+    setShowArrivalDialog(true);
+    
+
     try {
       const response = await fetch(`${API_BASE}/time-logs/arrival`, {
         method: 'POST',
@@ -160,11 +198,15 @@ const StaffTimeLogger: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 relative">
+      {/* Arrival Status Dialog */}
+      {showArrivalDialog && (
+       <ArrivalDialog arrivalStatus={arrivalStatus} setShowArrivalDialog={setShowArrivalDialog} />
+      )}
       <div className="flex items-center mb-6">
         <Users className="w-6 h-6 text-blue-600 mr-3" />
         <h2 className="text-2xl font-bold text-gray-800">Staff Time Logging</h2>
-        <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+        <span className="hidden lg:block ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
           Admin Supervised
         </span>
       </div>

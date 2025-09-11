@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Download, Filter } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { API_BASE } from "../../../utils/data";
 import { toast } from 'sonner';
 
@@ -167,7 +167,7 @@ const TimeReports: React.FC = () => {
                     <span className="text-gray-700">
                       <strong>Date:</strong> {formatDate(log.date)}
                     </span>
-                    <span className="text-blue-600">
+                    <span className={`${log.arrivalTime > "08:00" ? 'text-red-600' : 'text-green-600'}`}>
                       <strong>Arrival:</strong> {formatTime(log.arrivalTime)}
                     </span>
                   </div>
